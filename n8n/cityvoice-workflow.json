@@ -1,0 +1,290 @@
+{
+  "name": "CityVoice",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cityvoice-report",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a5901c99-59e5-46c5-894a-3681e9b8fbb5",
+      "name": "Receive Complaint",
+      "webhookId": "8f7e2b9f-f66c-4be6-9b17-0d89ccbd9ffa"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5c6d5b29-5f04-446d-afd7-7a3c165ba7f5",
+              "name": "issueId",
+              "value": "={{ \"CV-\" + Date.now() }}",
+              "type": "string"
+            },
+            {
+              "id": "7c9ca21d-b416-42dd-8103-fe4b28fe7c4c",
+              "name": "status",
+              "value": "Open",
+              "type": "string"
+            },
+            {
+              "id": "595bf0b6-04b0-4bf7-8106-aff990821211",
+              "name": "timestamp",
+              "value": "={{ new Date().toLocaleString('en-IN') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fd8db3cd-a009-4952-a439-06c4bc9f7b08",
+      "name": "Generate Issue ID"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1FWiPVOJIal0udwH_4Gq5IPWuiSvCaMfEJxez7Y6qf2A",
+          "mode": "list",
+          "cachedResultName": "CityVoice Reports",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FWiPVOJIal0udwH_4Gq5IPWuiSvCaMfEJxez7Y6qf2A/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FWiPVOJIal0udwH_4Gq5IPWuiSvCaMfEJxez7Y6qf2A/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Issue ID": "={{ $json.issueId }}",
+            "Name": "={{ $json.body.name }}",
+            "E-Mail": "={{ $json.body.email }}",
+            "Location": "={{ $json.body.location }}",
+            "Description": "={{ $json.body.description }}",
+            "Issue-Type": "={{ $json.body.issueType }}",
+            "Status": "={{ $('Generate Issue ID').item.json.status }}",
+            "Timestamp": "={{ $('Generate Issue ID').item.json.timestamp }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Issue ID",
+              "displayName": "Issue ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "E-Mail",
+              "displayName": "E-Mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Issue-Type",
+              "displayName": "Issue-Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Description",
+              "displayName": "Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        416,
+        0
+      ],
+      "id": "f43aa492-1a58-4ae8-816d-81a9ec1656ae",
+      "name": "Save Complaint to Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "kC8iO55WI7WaAq2S",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Generate Issue ID').item.json.body.email }}",
+        "subject": "CityVoice - Complaint Received Successfully",
+        "message": "=Hello {{$json.body.name}},  Thank you for reporting the issue through CityVoice.  Your complaint has been successfully registered.  Issue ID: {{$json.issueId}}  Issue Type: {{$json.body.issueType}}  Location: {{$json.body.location}}  Description: {{$json.body.description}}  Our municipal team has received your complaint.  Thank you for helping make Ratnagiri cleaner and safer.  - Team CityVoice",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "7669f0d9-988d-4a8b-9313-ad54835db287",
+      "name": "Send Citizen Confirmation",
+      "webhookId": "48e8a6d8-26a6-47a1-bcbc-0a2ede899d90",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UfNMHbZgGNspjJln",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "atharvmahadevakiwate06@gmail.com",
+        "subject": "=New CityVoice Complaint - {{$('Generate Issue ID').item.json.issueId}}",
+        "message": "=A new complaint has been submitted through CityVoice.  Issue ID: {{$('Generate Issue ID').item.json.issueId}}  Citizen Name: {{$('Generate Issue ID').item.json.body.name}}  Citizen Email: {{$('Generate Issue ID').item.json.body.email}}  Location: {{$('Generate Issue ID').item.json.body.location}}  Issue Type: {{$('Generate Issue ID').item.json.body.issueType}}  Description: {{$('Generate Issue ID').item.json.body.description}}  Please review and take appropriate action.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        0
+      ],
+      "id": "70ee6797-5cf9-49ae-b59b-d171f36a9fbd",
+      "name": "Notify Municipal Department",
+      "webhookId": "32c7dfc3-5fa9-4115-ab27-9de796fffdba",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UfNMHbZgGNspjJln",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Receive Complaint": {
+      "main": [
+        [
+          {
+            "node": "Generate Issue ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Issue ID": {
+      "main": [
+        [
+          {
+            "node": "Save Complaint to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Complaint to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Send Citizen Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Citizen Confirmation": {
+      "main": [
+        [
+          {
+            "node": "Notify Municipal Department",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "6f6f8389-5b64-4f6a-9a8a-7c54ac65932a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ab68982e4ec5399568ae23d82c65c239e7dc17cb988f9821ea2134f08c0db1c4"
+  },
+  "nodeGroups": [],
+  "id": "lEALVeHHYBG4xMbK",
+  "tags": []
+}
