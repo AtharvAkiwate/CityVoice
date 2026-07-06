@@ -92,30 +92,6 @@ Notification email sent to municipal department
 
 ---
 
-## 📸 Screenshots
-
-### Homepage
-
-*(Add homepage screenshot here)*
-
-### Workflow
-
-*(Add workflow screenshot here)*
-
-### Google Sheet
-
-*(Add Google Sheet screenshot here)*
-
-### Citizen Email
-
-*(Add citizen email screenshot here)*
-
-### Department Email
-
-*(Add department email screenshot here)*
-
----
-
 ## 🚀 Future Improvements
 
 - Complaint tracking dashboard
