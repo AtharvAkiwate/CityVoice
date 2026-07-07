@@ -116,3 +116,5 @@ Aspiring Cloud Security Engineer
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+Last updated: July 2026
